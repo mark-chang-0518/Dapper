@@ -171,15 +171,29 @@ namespace ConsoleApp1
             using (SqlConnection conn = new SqlConnection(DefaultConn))
             {
                 conn.Open();
+
+                string commandCheckStr = @"select name from sysobjects where name = 'Users' ; ";
+
+                using (SqlCommand command = new SqlCommand(commandCheckStr, conn))
+                {
+                    SqlDataReader reader = command.ExecuteReader();
+                    bool flag = false;
+                    while (reader.Read())
+                    {
+                        flag = true;
+                    }
+                    reader.Close();
+                    if (!flag)
+                        Console.WriteLine("-----建立 Table TableName:Users-----");
+                }
+
                 string commandStr = @"If not exists (select name from sysobjects where name = 'Users') 
 CREATE TABLE Users(UserId int IDENTITY(1,1) not null, Email nvarchar(max),Name nvarchar(50) not null,IsEnable bit,GuidID uniqueidentifier,Money decimal(18,2) ,LastUpdateTime datetime
 CONSTRAINT PK_Users PRIMARY KEY([UserId]))";
 
                 using (SqlCommand command = new SqlCommand(commandStr, conn))
                 {
-                    int i = command.ExecuteNonQuery();
-                    if(i > 0)
-                        Console.WriteLine("-----建立 DataTable Users-----");
+                    command.ExecuteNonQuery();
                 }
             }
         }
