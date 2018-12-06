@@ -38,7 +38,7 @@ namespace ConsoleApp1
                 #endregion               
 
                 #region ADO 查詢
-                SelectUserByAdoNet();
+                //SelectUserByAdoNet();
                 #endregion
 
                 #region Dapper 查詢
@@ -155,7 +155,11 @@ namespace ConsoleApp1
             using (var context = new MyContext())
             {
                 if (!context.Database.Exists())
+                {
                     ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
+                    Console.WriteLine(string.Empty);
+                    Console.WriteLine("-----建立 Local Database-----");
+                }
             }
         }
 
@@ -173,7 +177,9 @@ CONSTRAINT PK_Users PRIMARY KEY([UserId]))";
 
                 using (SqlCommand command = new SqlCommand(commandStr, conn))
                 {
-                    command.ExecuteNonQuery();
+                    int i = command.ExecuteNonQuery();
+                    if(i > 0)
+                        Console.WriteLine("-----建立 DataTable Users-----");
                 }
             }
         }
